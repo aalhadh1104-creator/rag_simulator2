@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aalhad | Product & AI Strategy Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #050816;
+      --card: rgba(13, 18, 38, 0.72);
+      --border: rgba(255,255,255,0.08);
+      --primary: #7c5cff;
+      --secondary: #00d4ff;
+      --text: #f5f7ff;
+      --muted: #98a0c5;
+      --success: #00ffb3;
+      --gradient: linear-gradient(135deg, #7c5cff 0%, #00d4ff 100%);
+      --shadow: 0 10px 40px rgba(0,0,0,0.45);
+    }
+
+    body {
+      background: radial-gradient(circle at top left, rgba(124,92,255,0.15), transparent 30%),
+                  radial-gradient(circle at bottom right, rgba(0,212,255,0.15), transparent 30%),
+                  var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+      z-index: 0;
+    }
+
+    .container {
+      width: min(1280px, 92%);
+      margin: auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 0;
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      backdrop-filter: blur(12px);
+      font-weight: 600;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124,92,255,0.5);
+      box-shadow: 0 0 20px rgba(124,92,255,0.25);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 30px;
+      align-items: center;
+      padding: 40px 0 60px;
+    }
+
+    .glass {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(124,92,255,0.35), transparent 70%);
+      top: -100px;
+      right: -80px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: var(--secondary);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 5vw, 5.5rem);
+      line-height: 1;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 20px;
+    }
+
+    .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      max-width: 700px;
+      margin-bottom: 30px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 35px;
+    }
+
+    .stat {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .stat h3 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      color: var(--secondary);
+    }
+
+    .stat p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .profile-panel {
+      padding: 30px;
+      position: relative;
+    }
+
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #7c5cff, #00d4ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .mini-title {
+      color: var(--muted);
+      margin-top: 6px;
+      margin-bottom: 20px;
+    }
+
+    .contact {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .contact-item {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: var(--muted);
+    }
+
+    .section {
+      margin: 40px 0;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .card {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.02));
+      pointer-events: none;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .timeline-item {
+      padding-left: 22px;
+      border-left: 2px solid rgba(124,92,255,0.35);
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      background: var(--secondary);
+      border-radius: 50%;
+      position: absolute;
+      left: -7px;
+      top: 8px;
+      box-shadow: 0 0 12px var(--secondary);
+    }
+
+    .timeline-item h4 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    .timeline-item span {
+      color: var(--secondary);
+      font-size: 0.9rem;
+    }
+
+    .timeline-item p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-top: 10px;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .skill {
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.92rem;
+      transition: 0.3s ease;
+    }
+
+    .skill:hover {
+      transform: scale(1.05);
+      background: rgba(124,92,255,0.15);
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+    }
+
+    .project-card {
+      padding: 24px;
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .project-top h3 {
+      margin-bottom: 10px;
+    }
+
+    .project-top p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    .project-footer {
+      margin-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(0,255,179,0.08);
+      color: var(--success);
+      font-size: 0.82rem;
+      border: 1px solid rgba(0,255,179,0.12);
+    }
+
+    .footer {
+      margin: 50px 0 40px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .cursor-glow {
+      width: 300px;
+      height: 300px;
+      position: fixed;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,92,255,0.15), transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s linear;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card,
+      .profile-panel,
+      .card {
+        padding: 28px;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="noise"></div>
+  <div class="cursor-glow" id="glow"></div>
+
+  <div class="container">
+
+    <nav>
+      <div class="logo">AALHAD.EXE</div>
+      <div class="nav-actions">
+        <button class="btn" onclick="window.print()">Print Resume</button>
+        <button class="btn" onclick="copyEmail()">Copy Email</button>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="glass hero-card">
+        <div class="tag">
+          ⚡ Product Thinking × AI Strategy × User Experience
+        </div>
+
+        <h1>
+          Building <span class="gradient-text">AI-first</span><br />
+          digital experiences.
+        </h1>
+
+        <p class="subtitle">
+          Product-minded builder focused on solving user problems through structured thinking, user research, AI-driven workflows, and impactful product strategy. Passionate about designing intuitive digital products, crafting PRDs, improving user journeys, and turning ambiguous ideas into scalable experiences.
+        </p>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <h3>10+</h3>
+            <p>Product concepts & PRDs explored</p>
+          </div>
+
+          <div class="stat">
+            <h3>AI</h3>
+            <p>Focused on AI-assisted product experiences</p>
+          </div>
+
+          <div class="stat">
+            <h3>UX</h3>
+            <p>User-centric problem solving approach</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass profile-panel">
+        <div class="avatar">A</div>
+
+        <h2>Aalhad</h2>
+        <p class="mini-title">Aspiring Product Manager • AI Product Enthusiast</p>
+
+        <div class="contact">
+          <div class="contact-item">📍 Pune, Maharashtra, India</div>
+          <div class="contact-item">📧 your-email@example.com</div>
+          <div class="contact-item">🔗 linkedin.com/in/yourprofile</div>
+          <div class="contact-item">💼 Product Strategy • UX Thinking • AI Workflows</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">🚀 Experience & Product Exploration</h2>
+
+      <div class="grid-2">
+        <div class="glass card">
+          <div class="timeline">
+
+            <div class="timeline-item">
+              <span>AI Product Thinking</span>
+              <h4>Naukri AI Career Coach</h4>
+              <p>
+                Conceptualized an AI-powered career guidance experience focused on helping users evaluate job readiness, improve resumes, and receive personalized role recommendations using AI-driven insights.
+              </p>
+            </div>
+
+            <div class="timeline-item">
+              <span>Marketplace Innovation</span>
+              <h4>Hyperlocal Rental Marketplace</h4>
+              <p>
+                Designed a peer-to-peer rental ecosystem for household products and electronics, balancing trust, affordability, deposits, and operational simplicity for early-stage scalability.
+              </p>
+            </div>
+
+            <div class="timeline-item">
+              <span>Customer Experience Research</span>
+              <h4>E-commerce & Food Delivery Analysis</h4>
+              <p>
+                Identified pricing transparency gaps, cancellation frustrations, and checkout drop-offs through user-centric analysis and product prioritization frameworks.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="glass card">
+          <h3 style="margin-bottom: 20px;">🧠 Core Strengths</h3>
+
+          <p style="color: var(--muted); line-height: 1.8; margin-bottom: 24px;">
+            Strong interest in product management, AI applications, user psychology, and building digital experiences that simplify complex user journeys.
+          </p>
+
+          <div class="skills">
+            <div class="skill">Product Requirement Documents</div>
+            <div class="skill">User Journey Mapping</div>
+            <div class="skill">AI Product Strategy</div>
+            <div class="skill">Problem Prioritization</div>
+            <div class="skill">UX Thinking</div>
+            <div class="skill">Feature Ideation</div>
+            <div class="skill">Customer Research</div>
+            <div class="skill">Growth Thinking</div>
+            <div class="skill">Wireframing</div>
+            <div class="skill">Market Research</div>
+            <div class="skill">Product Storytelling</div>
+            <div class="skill">Systems Thinking</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">🛠 Featured Projects</h2>
+
+      <div class="project-grid">
+
+        <div class="glass project-card">
+          <div class="project-top">
+            <h3>AI Career Coach</h3>
+            <p>
+              Built a detailed product vision for an AI-driven career assistant integrated with hiring workflows, resume intelligence, and job readiness scoring.
+            </p>
+          </div>
+
+          <div class="project-footer">
+            <span class="pill">AI + CareerTech</span>
+            <span>01</span>
+          </div>
+        </div>
+
+        <div class="glass project-card">
+          <div class="project-top">
+            <h3>Rental Economy Platform</h3>
+            <p>
+              Designed a side-income marketplace model enabling users to rent underutilized home products with trust-first onboarding and simplified deposits.
+            </p>
+          </div>
+
+          <div class="project-footer">
+            <span class="pill">Marketplace</span>
+            <span>02</span>
+          </div>
+        </div>
+
+        <div class="glass project-card">
+          <div class="project-top">
+            <h3>Pricing Transparency UX</h3>
+            <p>
+              Researched checkout drop-offs caused by hidden fees and proposed transparent pricing experiences for food delivery platforms.
+            </p>
+          </div>
+
+          <div class="project-footer">
+            <span class="pill">UX Research</span>
+            <span>03</span>
+          </div>
+        </div>
+
+        <div class="glass project-card">
+          <div class="project-top">
+            <h3>Future Product Experiments</h3>
+            <p>
+              Exploring AI-native interfaces, hyper-personalization, onboarding optimization, and product-led experiences for next-generation consumer apps.
+            </p>
+          </div>
+
+          <div class="project-footer">
+            <span class="pill">Innovation</span>
+            <span>04</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="glass card">
+        <h2 class="section-title">🎯 Career Vision</h2>
+
+        <p style="color: var(--muted); line-height: 2; font-size: 1.05rem; max-width: 1000px;">
+          I aim to build meaningful AI-powered digital products that improve decision-making, simplify complex workflows, and create intuitive user experiences. My focus lies at the intersection of product strategy, behavioral insights, and emerging AI technologies.
+        </p>
+      </div>
+    </section>
+
+    <div class="footer">
+      Designed as a futuristic interactive resume • Built with HTML, CSS & JavaScript
+    </div>
+
+  </div>
+
+  <script>
+    const glow = document.getElementById('glow');
+
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
+    function copyEmail() {
+      navigator.clipboard.writeText('your-email@example.com');
+
+      const btns = document.querySelectorAll('.btn');
+      btns[1].innerText = 'Copied ✓';
+
+      setTimeout(() => {
+        btns[1].innerText = 'Copy Email';
+      }, 2000);
+    }
+
+    const cards = document.querySelectorAll('.glass');
+
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(124,92,255,0.14), rgba(13,18,38,0.72) 42%)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.background = 'rgba(13, 18, 38, 0.72)';
+      });
+    });
+  </script>
+
+</body>
+</html>
