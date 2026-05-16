@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Simulator — Interactive Learning Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #050816;
+      --card: rgba(15, 22, 45, 0.72);
+      --border: rgba(255,255,255,0.08);
+      --primary: #7c5cff;
+      --secondary: #00d4ff;
+      --success: #00ffa3;
+      --warning: #ffc857;
+      --danger: #ff6b81;
+      --text: #f3f5ff;
+      --muted: #97a0c3;
+      --gradient: linear-gradient(135deg, #7c5cff 0%, #00d4ff 100%);
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(124,92,255,0.15), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(0,212,255,0.12), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at center, black 20%, transparent 90%);
+      pointer-events: none;
+    }
+
+    .container {
+      width: min(1400px, 92%);
+      margin: auto;
+      position: relative;
+      z-index: 2;
+      padding-bottom: 80px;
+    }
+
+    .hero {
+      padding: 60px 0 40px;
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-left {
+      max-width: 760px;
+    }
+
+    .tag {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      color: var(--secondary);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 5vw, 5.6rem);
+      line-height: 1;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 22px;
+    }
+
+    .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.05rem;
+      max-width: 700px;
+    }
+
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 28px;
+      width: 320px;
+    }
+
+    .hero-card h3 {
+      margin-bottom: 18px;
+    }
+
+    .mini-stat {
+      padding: 16px;
+      border-radius: 18px;
+      margin-bottom: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+      color: var(--secondary);
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      margin: 30px 0 22px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .step {
+      padding: 22px;
+      min-height: 220px;
+      position: relative;
+      transition: 0.3s ease;
+      cursor: pointer;
+    }
+
+    .step:hover {
+      transform: translateY(-6px);
+      border-color: rgba(124,92,255,0.4);
+    }
+
+    .step.active {
+      outline: 2px solid rgba(0,212,255,0.5);
+      transform: scale(1.02);
+    }
+
+    .step-number {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .step h3 {
+      margin-bottom: 12px;
+    }
+
+    .step p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.94rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 34px 0;
+    }
+
+    button {
+      border: none;
+      background: var(--gradient);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s ease;
+      font-family: inherit;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(124,92,255,0.35);
+    }
+
+    .secondary-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .simulator-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 24px;
+      margin-top: 10px;
+    }
+
+    .panel {
+      padding: 28px;
+      min-height: 620px;
+    }
+
+    .input-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 16px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      background: transparent;
+      border: none;
+      color: white;
+      resize: vertical;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      line-height: 1.7;
+    }
+
+    .doc-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .doc {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: 0.3s ease;
+    }
+
+    .doc.active {
+      border-color: rgba(0,212,255,0.45);
+      background: rgba(0,212,255,0.08);
+    }
+
+    .doc h4 {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .doc p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.92rem;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .status {
+      flex: 1;
+      min-width: 180px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .status span {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .status strong {
+      color: var(--secondary);
+      font-size: 1.1rem;
+    }
+
+    .terminal {
+      margin-top: 22px;
+      background: #03050f;
+      border-radius: 18px;
+      padding: 20px;
+      min-height: 240px;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: auto;
+      font-family: monospace;
+    }
+
+    .terminal-line {
+      margin-bottom: 14px;
+      line-height: 1.7;
+      color: #bde7ff;
+    }
+
+    .highlight {
+      color: var(--success);
+    }
+
+    .query-card {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(124,92,255,0.08);
+      border: 1px solid rgba(124,92,255,0.15);
+    }
+
+    .query-card h4 {
+      margin-bottom: 10px;
+    }
+
+    .query-card p {
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--muted);
+      line-height: 1.9;
+      text-align: center;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .chip:hover {
+      background: rgba(124,92,255,0.18);
+    }
+
+    @media (max-width: 1200px) {
+      .pipeline {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .simulator-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="container">
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="tag">⚡ Interactive AI Learning Playground</div>
+
+      <h1>
+        Understand <span class="gradient-text">RAG</span><br>
+        Visually & Interactively.
+      </h1>
+
+      <p>
+        This simulator helps you understand the complete Retrieval-Augmented Generation (RAG) pipeline step-by-step — from document ingestion and chunking to embeddings, vector search, retrieval, prompt augmentation, and final LLM response generation.
+      </p>
+    </div>
+
+    <div class="glass hero-card">
+      <h3>🧠 What You Will Learn</h3>
+
+      <div class="mini-stat">
+        <strong>Chunking</strong>
+        Breaking large documents into smaller pieces.
+      </div>
+
+      <div class="mini-stat">
+        <strong>Embeddings</strong>
+        Converting text into vectors.
+      </div>
+
+      <div class="mini-stat">
+        <strong>Retrieval</strong>
+        Finding relevant knowledge before answering.
+      </div>
+    </div>
+  </section>
+
+  <h2 class="section-title">🔄 Complete RAG Pipeline</h2>
+
+  <div class="pipeline">
+
+    <div class="glass step active" data-step="1">
+      <div class="step-number">1</div>
+      <h3>Documents</h3>
+      <p>
+        Raw PDFs, notes, FAQs, company data, research papers, or knowledge bases are uploaded into the system.
+      </p>
+    </div>
+
+    <div class="glass step" data-step="2">
+      <div class="step-number">2</div>
+      <h3>Chunking</h3>
+      <p>
+        Large text gets split into smaller chunks so the model can retrieve precise context later.
+      </p>
+    </div>
+
+    <div class="glass step" data-step="3">
+      <div class="step-number">3</div>
+      <h3>Embeddings</h3>
+      <p>
+        Each chunk is converted into vector embeddings representing semantic meaning.
+      </p>
+    </div>
+
+    <div class="glass step" data-step="4">
+      <div class="step-number">4</div>
+      <h3>Vector DB</h3>
+      <p>
+        Embeddings are stored inside vector databases like Pinecone, Weaviate, or Chroma.
+      </p>
+    </div>
+
+    <div class="glass step" data-step="5">
+      <div class="step-number">5</div>
+      <h3>Retrieval</h3>
+      <p>
+        User query embeddings search the vector database to retrieve similar chunks.
+      </p>
+    </div>
+
+    <div class="glass step" data-step="6">
+      <div class="step-number">6</div>
+      <h3>LLM Response</h3>
+      <p>
+        Retrieved context is injected into the prompt so the LLM generates grounded answers.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="controls">
+    <button onclick="runSimulation()">▶ Run Full Simulation</button>
+    <button class="secondary-btn" onclick="resetSimulation()">↺ Reset</button>
+    <button class="secondary-btn" onclick="randomQuery()">🎲 Random Query</button>
+  </div>
+
+  <div class="simulator-grid">
+
+    <div class="glass panel">
+      <h2>📚 Knowledge Base</h2>
+
+      <div class="query-card">
+        <h4>Ask the AI System</h4>
+
+        <div class="input-box">
+          <textarea id="queryInput">How does chunking improve retrieval accuracy in RAG systems?</textarea>
+        </div>
+
+        <div class="chip-row">
+          <div class="chip" onclick="setQuery('What are vector embeddings in AI?')">Embeddings</div>
+          <div class="chip" onclick="setQuery('Why do we use chunking in RAG?')">Chunking</div>
+          <div class="chip" onclick="setQuery('What is a vector database?')">Vector DB</div>
+          <div class="chip" onclick="setQuery('How does retrieval work in RAG?')">Retrieval</div>
+        </div>
+      </div>
+
+      <div class="doc-grid" id="documents">
+
+        <div class="doc" id="doc1">
+          <h4>
+            Chunking Basics
+            <span>📄</span>
+          </h4>
+          <p>
+            Chunking splits large documents into smaller meaningful pieces. Smaller chunks improve semantic search and retrieval precision.
+          </p>
+        </div>
+
+        <div class="doc" id="doc2">
+          <h4>
+            Vector Embeddings
+            <span>🧠</span>
+          </h4>
+          <p>
+            Embeddings convert text into numerical vectors that capture semantic meaning and relationships.
+          </p>
+        </div>
+
+        <div class="doc" id="doc3">
+          <h4>
+            Vector Database
+            <span>⚡</span>
+          </h4>
+          <p>
+            Vector databases store embeddings and perform similarity search using cosine similarity or nearest neighbor search.
+          </p>
+        </div>
+
+        <div class="doc" id="doc4">
+          <h4>
+            Retrieval Pipeline
+            <span>🔍</span>
+          </h4>
+          <p>
+            Retrieval finds the most relevant chunks matching the user query before sending context to the LLM.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="status-bar">
+        <div class="status">
+          <span>Chunks Created</span>
+          <strong id="chunkCount">0</strong>
+        </div>
+
+        <div class="status">
+          <span>Embeddings Generated</span>
+          <strong id="embeddingCount">0</strong>
+        </div>
+
+        <div class="status">
+          <span>Retrieved Context</span>
+          <strong id="retrievalCount">0</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass panel">
+      <h2>💻 Live RAG Execution</h2>
+
+      <div class="terminal" id="terminal">
+        <div class="terminal-line">
+          > System ready. Click <span class="highlight">Run Full Simulation</span> to visualize the RAG pipeline.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    Built as a futuristic educational simulator to help understand Retrieval-Augmented Generation (RAG) visually.
+  </div>
+
+</div>
+
+<script>
+
+  const terminal = document.getElementById('terminal');
+  const steps = document.querySelectorAll('.step');
+
+  function log(message) {
+    const line = document.createElement('div');
+    line.classList.add('terminal-line');
+    line.innerHTML = '> ' + message;
+    terminal.appendChild(line);
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+
+  function setActiveStep(stepNumber) {
+    steps.forEach(step => {
+      step.classList.remove('active');
+    });
+
+    document.querySelector(`[data-step="${stepNumber}"]`).classList.add('active');
+  }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async function runSimulation() {
+
+    resetVisuals();
+
+    const query = document.getElementById('queryInput').value;
+
+    log('<span class="highlight">User Query:</span> ' + query);
+
+    setActiveStep(1);
+    log('Loading source documents into knowledge base...');
+    await sleep(1200);
+
+    setActiveStep(2);
+    log('Splitting documents into semantic chunks...');
+
+    document.getElementById('chunkCount').innerText = '16';
+
+    highlightDoc('doc1');
+
+    await sleep(1400);
+
+    log('Chunk Example: "Chunking improves retrieval precision by reducing irrelevant context."');
+
+    setActiveStep(3);
+    log('Generating vector embeddings for all chunks...');
+
+    document.getElementById('embeddingCount').innerText = '16';
+
+    highlightDoc('doc2');
+
+    await sleep(1400);
+
+    log('Embedding Example: [0.21, -0.87, 0.44, 0.91...]');
+
+    setActiveStep(4);
+    log('Storing embeddings inside Vector Database...');
+
+    highlightDoc('doc3');
+
+    await sleep(1200);
+
+    log('Similarity indexing completed.');
+
+    setActiveStep(5);
+    log('Converting user query into embedding vector...');
+
+    await sleep(1200);
+
+    log('Performing cosine similarity search against vector DB...');
+
+    highlightDoc('doc4');
+
+    document.getElementById('retrievalCount').innerText = '3';
+
+    await sleep(1400);
+
+    log('<span class="highlight">Top Retrieved Chunks:</span>');
+    log('1. Chunking improves semantic retrieval accuracy.');
+    log('2. Smaller chunks reduce irrelevant context.');
+    log('3. Vector search retrieves semantically similar information.');
+
+    setActiveStep(6);
+
+    await sleep(1600);
+
+    log('<span class="highlight">Constructing Final Prompt:</span>');
+    log('User Query + Retrieved Context → Sent to LLM');
+
+    await sleep(1500);
+
+    log('<span class="highlight">LLM Response:</span> Chunking improves retrieval accuracy because smaller semantic units help the vector search system retrieve highly relevant context instead of large noisy documents. This improves grounding quality and reduces hallucinations in the final AI response.');
+
+    log('<span class="highlight">RAG Pipeline Completed Successfully ✓</span>');
+  }
+
+  function resetSimulation() {
+    terminal.innerHTML = `
+      <div class="terminal-line">
+        > System reset. Ready for another RAG simulation.
+      </div>
+    `;
+
+    resetVisuals();
+
+    document.getElementById('chunkCount').innerText = '0';
+    document.getElementById('embeddingCount').innerText = '0';
+    document.getElementById('retrievalCount').innerText = '0';
+  }
+
+  function resetVisuals() {
+    steps.forEach(step => step.classList.remove('active'));
+    document.querySelector('[data-step="1"]').classList.add('active');
+
+    document.querySelectorAll('.doc').forEach(doc => {
+      doc.classList.remove('active');
+    });
+  }
+
+  function highlightDoc(id) {
+    document.querySelectorAll('.doc').forEach(doc => {
+      doc.classList.remove('active');
+    });
+
+    document.getElementById(id).classList.add('active');
+  }
+
+  function setQuery(text) {
+    document.getElementById('queryInput').value = text;
+  }
+
+  function randomQuery() {
+    const queries = [
+      'Why are embeddings important in RAG systems?',
+      'How does vector search work?',
+      'What problem does RAG solve?',
+      'How does retrieval reduce hallucinations?',
+      'Why do we use chunking before embeddings?'
+    ];
+
+    const random = queries[Math.floor(Math.random() * queries.length)];
+
+    setQuery(random);
+  }
+
+  steps.forEach(step => {
+    step.addEventListener('click', () => {
+      const stepNum = step.getAttribute('data-step');
+      setActiveStep(stepNum);
+
+      const explanations = {
+        1: 'Documents are loaded into the RAG pipeline.',
+        2: 'Chunking divides large documents into smaller semantic units.',
+        3: 'Embeddings convert chunks into vector representations.',
+        4: 'Vectors are stored and indexed for similarity search.',
+        5: 'Relevant chunks are retrieved using vector similarity.',
+        6: 'Retrieved context is sent to the LLM for grounded generation.'
+      };
+
+      log('<span class="highlight">Step ' + stepNum + ':</span> ' + explanations[stepNum]);
+    });
+  });
+
+</script>
+
+</body>
+</html>
